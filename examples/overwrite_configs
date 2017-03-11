@@ -1,0 +1,12 @@
+#!/bin/bash
+
+basedir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+config_templates="$basedir/configs/*.conf.template"
+
+for template in $config_templates
+do
+	conf="$(echo $template | sed 's/\(.*\)\.conf\.template/\1\.conf/g')" # beware of the escaping  
+	echo "$template > $conf"
+	cp $template $conf
+done
