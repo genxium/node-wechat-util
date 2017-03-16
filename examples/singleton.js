@@ -60,9 +60,19 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(miniServerAsyncNotiPath, function(req, res) {
+const notificationRouter = express.Router({mergeParams: true});
+notificationRouter.post(miniServerAsyncNotiPath, function(req, res) {
+  console.log(miniServerAsyncNotiPath + ' called with req.body ');
 	console.dir(req.body);
+    
+  instance.verifyPaymentNotificationAsync(req.body)
+  .then(function(trueOrFalse) {
+    const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse); 
+    console.log('Should respond with \'' + respStr + '\'');
+    res.send(respStr);
+  });
 });
+app.use('/', notificationRouter);
 
 app.listen(miniServerPort, function () {
   console.log('Mini server listening on port ' + miniServerPort)

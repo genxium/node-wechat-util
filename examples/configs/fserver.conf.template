@@ -1,11 +1,11 @@
 {
-	protocol: 'http:',
+  protocol: 'http:',
   gateway: 'localhost:8089',
   webLoginEndpoint: 'localhost:8089',
   appId: 'wx5432dc1dd6164d4e',
   appSecret: 'secret1',
-	mchId: '10000100',
-	mchSecret: 'mch_secret',
+  mchId: '10000100',
+  mchSecret: 'mch_secret',
   spbillCreateIp: '127.0.0.1',
   mchApiGateway: 'localhost:8089'
 }  
