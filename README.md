@@ -1,4 +1,4 @@
-To test, please start an [fserver](https://bitbucket.org/genxium/fakeoauth2server) daemon beforehand. 
+To test, please start an [fserver](https://github.com/genxium/fserver) daemon beforehand. 
 
 ```
 shell@proj-root> npm install
