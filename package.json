@@ -1,13 +1,19 @@
 {
   "name": "node-wechat-util",
-	"description": "Utilities for WeChat authorization and payment integration on NodeJs.",
-	"repository": "https://github.com/genxium/node-wechat-util",
-  "version": "0.1.0",
-	"main": "index.js",
+  "description": "Utilities for WeChat authorization and payment integration on NodeJs.",
+  "repository": "https://github.com/genxium/node-wechat-util",
+  "version": "0.2.0",
+  "main": "index.js",
   "dependencies": {
     "cache-manager": "^2.4.0",
+    "crypto-js": "^3.1.8",
     "js-yaml": "^3.6.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "xml2js": "^0.4.17"
   },
-	"license": "MIT"
+  "devDependencies": {
+    "express": "^4.15.2",
+    "body-parser": "^1.15.2"
+  },
+  "license": "MIT"
 }
