@@ -59,12 +59,10 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
+app.use(bodyParser.raw({ type: 'text/plain' }))
 
 const notificationRouter = express.Router({mergeParams: true});
 notificationRouter.post(miniServerAsyncNotiPath, function(req, res) {
-  console.log(miniServerAsyncNotiPath + ' called with req.body ');
-	console.dir(req.body);
-    
   instance.verifyPaymentNotificationAsync(req.body)
   .then(function(trueOrFalse) {
     const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse); 
