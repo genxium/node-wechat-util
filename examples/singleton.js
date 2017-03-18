@@ -94,9 +94,10 @@ app.listen(miniServerPort, function() {
 
   instance.queryUnifiedOrderRespAsync(outTradeNo, notifyUrl, nonceStr, body, totalFeeCents, tradeType)
     .then(function(respBody) {
-      parseString(respBody, function(err, result) {
-        console.log('Response from payment server is');
-        console.dir(result);
-      });
+      return instance.xmlStr2ObjAsync(respBody);
+    })
+    .then(function(result) {
+      console.log('Response from payment server is');
+      console.dir(result);
     });
 });

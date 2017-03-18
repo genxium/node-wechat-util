@@ -7,3 +7,7 @@ shell@proj-root> npm install
 shell@proj-root> ./examples/overwrite_configs 
 shell@proj-root> node ./examples/singleton.js
 ```
+
+This repository and [WeChat sandbox/fserver](https://github.com/genxium/fserver) as a pair is backing the account system of [RRate prod](https://www.red0769.com/node/voting-activity/local-editor) and [RRate staging](http://staging.red0769.com/node/voting-activity/local-editor).
+
+Moreover, an open source application example can be found [here](https://github.com/genxium/ExpressAndReactDemo).
