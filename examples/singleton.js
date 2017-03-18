@@ -4,27 +4,28 @@ const singletonEnforcer = Symbol();
 const baseAbsPath = __dirname + '/';
 
 const gen32bytes = function() {
-	const s4 = function() {
-		return Math.floor((1 + Math.random()) * 0x10000)
-			.toString(16)
-			.substring(1);
-	};
-	return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+  const s4 = function() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  };
+  return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
 };
 
 const getRandomInt = function(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min)) + min;
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 const BackendApiCore = require(baseAbsPath + '../lib/BackendApiCore').default;
 
 class BackendApiSingleton extends BackendApiCore {
   constructor(enforcer) {
-    if (enforcer != singletonEnforcer) throw 'Cannot construct singleton';
+    if (enforcer != singletonEnforcer)
+      throw 'Cannot construct singleton';
 
-		super(enforcer);
+    super(enforcer);
   }
 
   static get instance() {
@@ -35,7 +36,7 @@ class BackendApiSingleton extends BackendApiCore {
   }
 }
 
-const instance = BackendApiSingleton.instance; 
+const instance = BackendApiSingleton.instance;
 instance.loadConfigFileSync(baseAbsPath + './configs/fserver.conf');
 
 /* Info dict loading. */
@@ -59,37 +60,43 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-app.use(bodyParser.raw({ type: 'text/plain' }))
+app.use(bodyParser.raw({
+  type: 'text/plain'
+}))
 
-const notificationRouter = express.Router({mergeParams: true});
+const notificationRouter = express.Router({
+  mergeParams: true
+});
 notificationRouter.post(miniServerAsyncNotiPath, function(req, res) {
+  console.log(miniServerAsyncNotiPath + ' called, with request body');
+  console.log(req.body);
   instance.verifyPaymentNotificationAsync(req.body)
-  .then(function(trueOrFalse) {
-    const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse); 
-    console.log('Should respond with \'' + respStr + '\'');
-    res.send(respStr);
-  });
+    .then(function(trueOrFalse) {
+      const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse);
+      console.log('Should respond with \'' + respStr + '\'');
+      res.send(respStr);
+    });
 });
 app.use('/', notificationRouter);
 
-app.listen(miniServerPort, function () {
+app.listen(miniServerPort, function() {
   console.log('Mini server listening on port ' + miniServerPort)
 
-	/* Unified order API of `NATIVE` type. */
-	const outTradeNo = gen32bytes(); 
-	const notifyUrl = 'http://localhost:' + miniServerPort + miniServerAsyncNotiPath;
-	const nonceStr = gen32bytes();
-	const body = 'This is a testing order';
-	const totalFeeCents = getRandomInt(100, 10000);
-	const tradeType = 'NATIVE';
-	const openId = null;
-	const limitPay = null;
+  /* Unified order API of `NATIVE` type. */
+  const outTradeNo = gen32bytes();
+  const notifyUrl = 'http://localhost:' + miniServerPort + miniServerAsyncNotiPath;
+  const nonceStr = gen32bytes();
+  const body = 'This is a testing order';
+  const totalFeeCents = getRandomInt(100, 10000);
+  const tradeType = 'NATIVE';
+  const openId = null;
+  const limitPay = null;
 
-	instance.queryUnifiedOrderRespAsync(outTradeNo, notifyUrl, nonceStr, body, totalFeeCents, tradeType)
-	.then(function(respBody) {
-		parseString(respBody, function (err, result) {
-			console.log('Response from payment server is');
-			console.dir(result);
-		});
-	});
+  instance.queryUnifiedOrderRespAsync(outTradeNo, notifyUrl, nonceStr, body, totalFeeCents, tradeType)
+    .then(function(respBody) {
+      parseString(respBody, function(err, result) {
+        console.log('Response from payment server is');
+        console.dir(result);
+      });
+    });
 });
