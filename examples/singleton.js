@@ -48,8 +48,6 @@ console.log('\n');
 const miniServerPort = 9999;
 const miniServerAsyncNotiPath = '/async-cb/v1/wechat-pubsrv/payment/notify';
 
-const parseString = require('xml2js').parseString;
-
 /* Mini server for async notification */
 const express = require('express');
 const app = express();
@@ -68,11 +66,20 @@ const notificationRouter = express.Router({
   mergeParams: true
 });
 notificationRouter.post(miniServerAsyncNotiPath, function(req, res) {
-  console.log(miniServerAsyncNotiPath + ' called, with request body');
-  console.log(req.body);
-  instance.verifyPaymentNotificationAsync(req.body)
+  instance.xmlStr2ObjAsync(req.body)
+    .then(function(result) {
+      console.log('A payment notification comes in ');
+      console.dir(result);
+      return instance.verifyPaymentNotificationAsync(req.body);
+    })
     .then(function(trueOrFalse) {
       const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse);
+      console.log('Should respond with \'' + respStr + '\'');
+      res.send(respStr);
+    })
+    .catch(function(err) {
+      console.trace(err);
+      const respStr = instance.generateRespStrSyncForPaymentNotification(false);
       console.log('Should respond with \'' + respStr + '\'');
       res.send(respStr);
     });
