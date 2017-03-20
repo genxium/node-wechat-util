@@ -58,9 +58,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-app.use(bodyParser.raw({
-  type: 'text/plain'
-}))
+app.use(bodyParser.raw({type: '*/*'}));
 
 const notificationRouter = express.Router({
   mergeParams: true
