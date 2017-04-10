@@ -7,5 +7,6 @@
   mchId: '[0-9]+',
   mchSecret: 'barbarbar',
   spbillCreateIp: 'xxx.xxx.xxx.xxx',
-  mchApiGateway: 'api.mch.weixin.qq.com'
+  mchApiGateway: 'api.mch.weixin.qq.com',
+  callbackNotifyGateway: 'xxx.xxx.xxx.xxx:pppp'
 }

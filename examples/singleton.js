@@ -89,7 +89,7 @@ app.listen(miniServerPort, function() {
 
   /* Unified order API of `NATIVE` type. */
   const outTradeNo = gen32bytes();
-  const notifyUrl = 'http://localhost:' + miniServerPort + miniServerAsyncNotiPath;
+  const notifyUrl = 'http://' + instance.callbackNotifyGateway + miniServerAsyncNotiPath;
   const nonceStr = gen32bytes();
   const body = 'This is a testing order';
   const totalFeeCents = getRandomInt(100, 10000);
