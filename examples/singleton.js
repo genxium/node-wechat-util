@@ -41,11 +41,9 @@ instance.loadConfigFileSync(baseAbsPath + './configs/fserver.conf');
 
 /* Info dict loading. */
 const webLoginInfoDict = instance.queryWebLoginInfoDictSync();
-console.log('The login info dictionary');
-console.dir(webLoginInfoDict);
-console.log('\n');
+console.log('The login info dictionary\n', webLoginInfoDict, '\n the loaded mch_id and mch_secret', instance.mchId, instance.mchSecret);
 
-const miniServerPort = 9999;
+const miniServerPort = 9009;
 const miniServerAsyncNotiPath = '/async-cb/v1/wechat-pubsrv/payment/notify';
 
 /* Mini server for async notification */
@@ -72,13 +70,12 @@ notificationRouter.post(miniServerAsyncNotiPath, function(req, res) {
     })
     .then(function(trueOrFalse) {
       const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse);
-      console.log('Should respond with \'' + respStr + '\'');
+      console.log('Verification of notification failed, should respond with ', respStr);
       res.send(respStr);
     })
     .catch(function(err) {
-      console.trace(err);
       const respStr = instance.generateRespStrSyncForPaymentNotification(false);
-      console.log('Should respond with \'' + respStr + '\'');
+      console.log('Error occurred', err, ', should respond with', respStr);
       res.send(respStr);
     });
 });
@@ -104,5 +101,10 @@ app.listen(miniServerPort, function() {
     .then(function(result) {
       console.log('Response from payment server is');
       console.dir(result);
+      return instance.payUnifiedOrder(result.xml.code_url, "SUCCESS");
+    })
+    .then(function(paymentRsp) {
+      console.log('paymentRsp is');
+      console.dir(paymentRsp);
     });
 });
