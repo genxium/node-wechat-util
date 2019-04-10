@@ -106,7 +106,7 @@ app.listen(miniServerPort, function() {
     .then(function(result) {
       console.log('Response from payment server is');
       console.dir(result);
-      return payUnifiedOrder(result.xml.code_url, "FAIL", "2");
+      return payUnifiedOrder(result.xml.code_url, "intendedResultCode", "intendedErrCode");
     })
     .then(function(paymentRsp) {
       console.log('paymentRsp is');
@@ -114,7 +114,7 @@ app.listen(miniServerPort, function() {
     });
 });
 
-const payUnifiedOrder = function(codeUrl, indendedResultCode, intendedErrCode){
+const payUnifiedOrder = function(codeUrl, intendedResultCode, intendedErrCode){
     const endpoint = instance.apiProtocol + '//' + instance.apiGateway + '/payment/authorization';
     const theUnifiedOrderInfo = sharedLib.getQueryParamsFromURLStr(codeUrl);
     const params = {
@@ -122,13 +122,15 @@ const payUnifiedOrder = function(codeUrl, indendedResultCode, intendedErrCode){
         "mch_id": instance.mchId,
         "out_trade_no": theUnifiedOrderInfo.out_trade_no,
         "prepay_id": theUnifiedOrderInfo.prepay_id,
-        "indended_result_code": indendedResultCode,
+        "intended_result_code": intendedResultCode,
         "intended_err_code": intendedErrCode
     };
+    const postData =  JSON.stringify(params);
+    console.log("payment query parms == ", postData);
     return new Promise(function(resolve, reject) {
         request.post({
           url: endpoint,
-          form: JSON.stringify(params),
+          form: postData,
         }, function(error, wxResp, body) {
           if (undefined !== error && null !== error) {
             console.log("payment fails#1, error is ", error)

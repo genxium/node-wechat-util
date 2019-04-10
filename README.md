@@ -7,3 +7,7 @@ shell@proj-root> npm install
 shell@proj-root> ./examples/overwrite_configs 
 shell@proj-root> node ./examples/singleton.js
 ```
+支付订单流程 examples/singleton.js
+  1.请求生成订单 instance.queryUnifiedOrderRespAsync(...) 
+  2.支付订单（手动结算） instance.payUnifiedOrder({codeUrl from queryUnifiedOrderRespAsyncResp }, {intendedResultCode}, {intended_err_code})
+  3.收到支付订单通知(由支付平台回调) 由notificationRouter监听
