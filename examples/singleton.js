@@ -2,6 +2,8 @@ const singleton = Symbol();
 const singletonEnforcer = Symbol();
 
 const baseAbsPath = __dirname + '/';
+const request = require('request');
+const sharedLib = require(baseAbsPath + '../lib/shared');
 
 const gen32bytes = function() {
   const s4 = function() {
@@ -70,7 +72,10 @@ notificationRouter.post(miniServerAsyncNotiPath, function(req, res) {
     })
     .then(function(trueOrFalse) {
       const respStr = instance.generateRespStrSyncForPaymentNotification(trueOrFalse);
-      console.log('Verification of notification failed, should respond with ', respStr);
+      if(false){
+        console.log('Verification of notification failed, should respond with ', respStr);
+      }
+       console.log('generateRespStrSyncForPaymentNotification == ', respStr);
       res.send(respStr);
     })
     .catch(function(err) {
@@ -101,10 +106,42 @@ app.listen(miniServerPort, function() {
     .then(function(result) {
       console.log('Response from payment server is');
       console.dir(result);
-      return instance.payUnifiedOrder(result.xml.code_url, "SUCCESS");
+      return payUnifiedOrder(result.xml.code_url, "FAIL", "2");
     })
     .then(function(paymentRsp) {
       console.log('paymentRsp is');
       console.dir(paymentRsp);
     });
 });
+
+const payUnifiedOrder = function(codeUrl, indendedResultCode, intendedErrCode){
+    const endpoint = instance.apiProtocol + '//' + instance.apiGateway + '/payment/authorization';
+    const theUnifiedOrderInfo = sharedLib.getQueryParamsFromURLStr(codeUrl);
+    const params = {
+        "app_id": instance.appId,
+        "mch_id": instance.mchId,
+        "out_trade_no": theUnifiedOrderInfo.out_trade_no,
+        "prepay_id": theUnifiedOrderInfo.prepay_id,
+        "indended_result_code": indendedResultCode,
+        "intended_err_code": intendedErrCode
+    };
+    return new Promise(function(resolve, reject) {
+        request.post({
+          url: endpoint,
+          form: JSON.stringify(params),
+        }, function(error, wxResp, body) {
+          if (undefined !== error && null !== error) {
+            console.log("payment fails#1, error is ", error)
+            resolve(null);
+          } else if (undefined === wxResp || null === wxResp) {
+            console.log("payment fails#2, wxResp is ", wxResp)
+            resolve(null);
+          } else if (200 != wxResp.statusCode) {
+            console.log("payment fails#3, wxResp is ", wxResp)
+            resolve(null);
+          } else {
+            resolve(body);
+          }
+        });
+      });
+}
